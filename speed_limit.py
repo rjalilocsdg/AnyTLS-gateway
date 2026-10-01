@@ -1,39 +1,46 @@
 # CFM Python 3.12 distribution. See README.md.
-def _cfm_77f7df45a7cdcbc3():
-    import base64, hashlib, marshal, sys, zlib
+def _cfm_load_payload():
+    import base64, hashlib, marshal, os, sys, zlib
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
     if sys.version_info[:2] != (3, 12):
         raise RuntimeError("CFM requires Python 3.12; deploy using the supplied Dockerfile")
     parts = (
-        (9, 'tY5M(-wTyD8{xQTWAEQlieN6u=9z~DYozoiZ1EVtEqkI~b5l)ZiRZ+B%Pf2BBhhiCDm;)@}1**x)1w+J6K17=S$>7d42lZNeYIivNRZzYn3jd5)%'),
-        (4, 'bc>MgVLXRhvB;@?&=Cb@ay8;u&3h-aiM-bW&=zte0j2P{ojp?*1tEU`dp$-7{^1boKhA)1ZcwHHYmXJuGbf&EauL0Hn#CSZsQXr_G1APkpv5=KqP'),
-        (0, '$(HZ?1j}evIN^bHdP;EOq2i7Dn^y65cp*8n5Cw)KBSz`^KFjo+E&O^PzG8+GNyh{PB0%gpR}8Ef5VWf*i|ASa-up>K0cIqwV*;T#4o0nROP4BDrB'),
-        (6, '%aVxDVT)49iSBg$ECT0A1TIhjfG2*DgF`o@8nD6+#F5wTJCZVu^=@{52p$SyzLelZq+Q?=gA7O|OuanYFS<Jz@8`&LtdqL}fG0m@J(XxT^t=$I?l'),
-        (12, '@yRK*CD%D%lD!g-GQmD972lnnlMWTv#`FF<+N6U1DvfNwn6gFOR+067%YTU^~dhh~i4mA>kc}90SK*1wT+IfhX#DP>OnsMt1*5GdIpfdhXw;gEPe'),
-        (14, 'IiAs35O`Ck-2c%IvMP*BOkzJTQ#IwP9X$Y`ImjL}b4m$e`-0g-8Dmqb-4rcT9##Jm3PwSyqzNi{bxudL5r`}4YvWVX*MBK``p+3wYbfs|!8jO2Ir'),
-        (10, ')xzJ^QlGk=7;&RBh;Q2rh6%thwiE58bD;D6dAv%w`21}cOVWxrNd_Dha**JnYn75=Ne8)arb^^l_lztP__`MRS0=c>Zl@ru;G+=mP?SadhcLUuW_'),
-        (7, 'VXeh<MQQ?XZ2JvChO|=#mh1MYZV~en`{By5pg-1oeV+SIEZb*A>1>fK{h(oQ={y(;dZVr-$H8IMAcPMLu7GD%!>R9I~^Byr4sU&k({z80m$lH11k'),
-        (19, 'QO!AKV8Cu%(d&aR!?qpSqLwpgf6^{HyQ=Cx2=J9&15CTkzq?E$o#xeS_9c@v?7K~x}ztW$_v#zR)@Xw1Dah=<vNb)F!{Wu6XUD%c4o0e3KT;jhXj'),
-        (16, 'x_aYb@FGg<w`pwUQ~D&MtIH3C&Mo)ntT&jYhc0K}+S>25{r?op7-|KTHcD6R%TId!GO>5v8!S9gT9)C?5-zfA9AA$rvQ(>Fcdb*gf>0INaAOi=S_'),
-        (1, 'X{=kICKwvXF@hTbO)|Hr1<s;;mmhRAb;D{XGwXADC0~m-ZV&2FOQ#c?-68lnDyEX@a^>V6mgB)=7eQ%A$ZJs=X3mdh?*R9@e_C-X&Ha-G>#kCU%;'),
-        (15, '@CYkj`Ksm7imG+J+mmI-MUO6Zv<)Q)pxb@3Y2Zjkumn#lq&uw|xQQK~xtbT<18}l};|zuk%>2!D@*TF?m|yB{3A1td$qsoqGdPvTbYE$-dTu(>Kx'),
-        (18, 'iy^$E;+i_Iy)!`4eNTE5K`Oseu(FfQJE(g4VYu8<*g`THv9bp(>I&lNIW}dwT!aPRu70m$iMD`*p2F{r?(zLvT(czEL@U`=I;xRN@qv}vejSY;?%'),
-        (2, 'Q;Bs&&`j-~Aqm7;uK9N&}t`6Mz04?i(k^}h52A8~3i7v4QzH84qtcF^1{_>OtV*ycx1>K-`kcIDNzK;&nEy(qf2G1nx*MDJrHivGh0KLVXg8remW'),
-        (3, '%h%#WOdMGgi56~GXyZ1xk#DJ>7IqtUd{hjgiKmB!2T+Qm$6N6FXW)=PPJPdbw8F315X#Ee^3iG)t5O{c33g0K^z%H8Jg6Yq4`WL)A~oP_KISxl5s'),
-        (20, '#0+&X0b7V|ZWI4uyV{Wd$-flVmlpM-_mHP7@q&*FCWt_Ona(+sA5O)PA9zce6dgdF3|~VrhnwGpoo{n4DRilkLrk{kdtXR0MGUa$Cc&y_NpvwHFg'),
-        (5, '62OPpsW$U|_|Q5*09C*Zy2HN^e>Jy57VxSBPPNzUTs3W?+&9hDUJPmU25Ss{7$<GjgTZ^ul@dr1YHF5MqeD3F*U_zOU;fH$7R8$HewAyKARcDg)&'),
-        (21, 'wA`1sl>`<z@%>g9%%lz*Flpa!zTL?4L7gq5uq9U^~Jo9!?>&9%GBGI{D=4{s0poNiZ1NTm'),
-        (17, 'cT^~T06Nw~>BSaOzkiS36$1e@sj$G+M!msFSx?wya0Ej`3ehH}*mk&q{pDOAu6zIBS73QO3>V~}m4y;5ba^Da&?D_2NeJRA2v_X~fHA{-1=0iOK;'),
-        (8, 'UK`87eArp6ILr`nW4Z>Z(s`q4k*3FjrwFG08t8;SD3s{`kdvXTZ*Z#Nldq=2iNa@$VLF5xFDpAT#C{?J=mv4s}r&9GLS;}l^O8$ZV?AUvb=}iJTD'),
-        (13, '9RC9wCt~FhdapwE)l2f0QrW<X=Q8g?sGu9wZgEacX`XFw^eE|{-7h7^j`VQkJv8Ha-I&&Ug&39!Kh#-Ul$t76^#m^m|po%7V;ck*)XRj{VUI6+9}'),
-        (11, 'J){r=snfJN%-=q_zgvtD-*|d1oxOPg<?XjjSoqy)JULk{E|H8<dU%?Lu4|3KacQZ-uo9_VqG=R_5VuFko8Hz2cor3*-6WEhHJj5w^i-QsGI~_K<E'),
+        (20, '%Jf>!_|Mjf`+B^3Wp@V1T4@I`G=&ocbJ>QNrVaE<(E^!915`n@!AW=DjWd3O-*3rB*g~CHZk_Qj7%3kv!)$xl9)a+dS|COFD<`a`!a*Tcf9b5ld|'),
+        (16, '1XY5%dDu5^gN7xb$kmZWDM1yXWo!qJ-<1BB~1UmO!fnl`wKLTq>S^Vl=Xzvml!;;DlGSiZ!!U<P~#k+3JBTB&i`^pdSMyIqJlS6VyfDb6i;hLVWt'),
+        (2, 'x4^0BWmbCAT(8-N$jbs9Rr3g@P8N^tL@hR1eOt5pF<rY^)Cy`VQOx>TO69=wH@)+pZHJZyt*j~0VNbMBE=(8_RVsh(k@Cev>acEgWaBO!3_2wQ4p'),
+        (6, 'w<nUC^yf#qg=DaX%{i_kp1LTVMI@;ckX6SH)w)IR*gRHdApJ=Mb0?0zwuCO}%v^8Su0X%H_7n>bf7v4nP3*DP7p(bG1fum4bwH->#p!Wa-ZU`(tL'),
+        (19, '>@reVYy2cKuKy%)vbT%>02!$WrnEz3Q*@IN(>%%koJu?W73z;KrA#U8gTso+D>EPKWe?FZW#?n-8Yus^;ANVi^I3r*?!;er=sx*t@FU&u$`yQ&3v'),
+        (0, '^hdz8I@PYdcw;lUQ=^Y#3iJ}u3fGGov^EHPyYXfk8Z-L^C`UrJ((pFxd?_60Dq)3fw_b#A<!!i9tyz!`^GP=95_AN<nqe8oT0oN?JV3~j-p#VTms'),
+        (13, '+3Hn2Ke!K#XC-K9E4A$euo4BBvEpzLD1$qjLQd#ywU|M8WCzw9>alCCCBcA{}4AVqfN75SjtEolhV?UpaXM!!U1Q=S<ertgaNH@Bene5c5lU;5kv'),
+        (8, 'uZYuJU+}3DKa7C-Xcy^VAgmQiQSVm^ZJ9GxVxbyh*O{zj8sm^c2;@hITP|v&_ukS(gdhvGBoQ?`K5K2%)~m6;l|B|pfULeV3`*qL$ISt3)nrr$;o'),
+        (11, 'e8m7~XSaJkJ7?8)SNh|Dalw(3D2~jDA8^Aj`zt&-qr@8{$25mNg<jtn_8a3~^mlKHi}#b0)|b6-dSE^Fv0Y%Y^h-@$O2Jv|UVGYmRz4C$<@<>;#n'),
+        (5, 'o<-?RKF@Pj6B|(R+b3EmlD|;{3l*9X^~Fbnu6(;|=W8*;F(S{ZU&y1#QX;CfJc19gI1@TQi}_FFp}x!P=FezKmyh8)DlMcg@#z;z3##yKgY7x7&g'),
+        (18, '`~P^o2TU#8)mS`YUj(%ZXN_i<mHdGON#`6@jXjj%8_P&_T{r@)Z+6pvlOtvVV3;@pd2TLWFtVU=xu5_^fk%H)X`~L0feNTe{k_kp<%<czgm$uE0J'),
+        (12, 'P@%15OodT19?;|%&dT*4ZMgzxx-t>|RgL=mH-Z7<xj5Pe34M#&jcPIPj%-dopSh|lpw?z}UND6EO<D!!<hLV?dVoWo`LunaqHG4w*BzF{?<e)CCL'),
+        (7, 'nA)kEN@AQmgH@51yCF8tHTYbsHdZYG(+K?~7Eu*#ksh>8>R5OfH`~AVJNv%=dwsLba{&kTnUe^Xt1k^ql4~dIQ^l5O7FN*4w<)F~MtQ~MDdj3xR_'),
+        (9, 'KYo9JCU>+MW_8?I#--LctJj~(11!qJ^HrrG2StmAOMce_=n>ZWC@#1fm>mjqv;*T7y;>q|zG0c9AV;}*Tm`I9hY7myTrU%uWIl52FDH1?JHV3Cx^'),
+        (15, 'a5KcohkT2`i~yAxHGal-$zR$elj6oW{Lq$~61$zG2*p7kBe(GwLOmOwX4o8J)?HQTEd2f&&8JS?BwvgKz_5&uBaexfJ-$)C?}@MdoKQOh&-7WMPb'),
+        (1, '^{Wdcr=z0u0nNSc-Fq%=(z+64b!~dI}{P80TT9Le^EpM$;Px*a8^z^*;d{if`ZG8?(ZgU6?)aR(g+!z0gGY%L0cF4K|etOD>QDS+c74ikC$)FJY7'),
+        (10, ')T>NQ#sNgFSnC-H7>Y*^8-RpA-t9(;wdFOa_B}XWe|D6OYX?6A6#Ao=PP~%JB-a2e8Z+4U$x4}-0suN^qLz6*E`yP$$6z{;SwyDAz4x7om6YCGn|'),
+        (17, 'Qj-|)KJY?Ln-2Bnfahg1|JUX2Sa;BE7a_69auw;NeezlcTyMw?;NZ?IQYu^EOi=rTU+L{i*UTVB$Kn-1-TuY#K$r6tLUp-9U?qq)6t|^bsJvJL9q'),
+        (21, '13bAk(KNV|I)A0s%Ss&eRs5{Vs)=Xp$&y(bT3^^-LV;3;JM^&3Gqfv-6@)3g29a+XoVozRcO(D3+Pz8gL5u4_p<r_6?Z9Ko=^|vEMe*rv'),
+        (4, 'xSNVWz;pU>V7_AAPZgI5ZQ!bdqolDEvO{zojIv&qM1yw*`j?>+zzYcXFb5<Q?;1y~7bJIL*fcEf=@0sa(UXlfhOhVYz*9@|e63s73C->jp5T{S1d'),
+        (14, '+f>e0h|(i(ja&&so(-L~c772|v}-ys)4CsM=b6f3@I_>wi241HKC@DW85<0)CCudS69a1+9)Bq~XzBEsTxqU|3L`h|4Xu>@$pvP=F1_$lP=HzqRF'),
+        (3, '-u#K+D^om<Q=ZXWY*sQ4W!HlB%!TM33|32O%6#K_PxJeM!gnbwEN#qk`#cP&o&A)R*_KD9sKknd(`0rTwAz3@g25<vIOcvH#t_kt#IVLoq86BJ5&'),
     )
     packed = base64.b85decode("".join(part for _, part in sorted(parts)))
-    key = bytes.fromhex('e52679e39534ec4493ab6556e4b9ad33d0693dc31cb7a750bf7d15085d9623bf')
-    stream = b"".join(hashlib.sha256(key + i.to_bytes(4, "big")).digest()
-                      for i in range((len(packed) + 31) // 32))
-    raw = zlib.decompress(bytes(value ^ stream[i] for i, value in enumerate(packed)))
+    try:
+        key = bytes.fromhex(os.environ["CFM_ENCRYPTION_KEY"])
+        if len(key) != 32:
+            raise ValueError
+        compressed = AESGCM(key).decrypt(packed[:12], packed[12:], b'speed_limit.py')
+    except (KeyError, ValueError):
+        raise RuntimeError("Set CFM_ENCRYPTION_KEY to the 64-character build secret") from None
+    except Exception as exc:
+        raise RuntimeError("CFM payload authentication failed; check CFM_ENCRYPTION_KEY") from exc
+    raw = zlib.decompress(compressed)
     if hashlib.sha256(raw).hexdigest() != 'e326b136d78e0162f196f9ba6007e9672f9f8025ee7a04730a30d4e5a5dbf45e':
         raise RuntimeError("CFM module payload is damaged")
     exec(marshal.loads(raw), globals())
-_cfm_77f7df45a7cdcbc3()
-del _cfm_77f7df45a7cdcbc3
+_cfm_load_payload()
+del _cfm_load_payload

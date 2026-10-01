@@ -8,7 +8,7 @@ The transport uses the [official AnyTLS session engine](https://github.com/anytl
 pinned to commit `fd6167acd6d73b9fa3e607659951847fbc9e6c50`. It supports AnyTLS
 v1/v2 sessions, padding negotiation, multiple streams, TCP, and UDP-over-TCP.
 Each configuration's UUID is its AnyTLS password. Native code is compiled; the
-Docker image ships obfuscated Python 3.12 bytecode. This obfuscation is reversible.
+Docker image ships encrypted Python 3.12 bytecode.
 
 ## CFM interface and distribution
 
@@ -18,12 +18,13 @@ navigation, visible keyboard focus, and light/dark dashboard themes. Icons are
 served locally; the bundled Tabler font license is in `assets/TABLER-LICENSE`.
 
 The seven Python modules are compiled with Python 3.12, with docstrings removed,
-then marshaled, compressed, masked with a per-module random key, and stored as
-shuffled Base85 chunks. A SHA-256 check detects corrupted payloads at load time.
-There is no plain source payload in the wrappers. This makes casual inspection
-harder, but anyone with the artifacts can reverse the loader. Do not put secrets
-in the application code. The supplied Dockerfile pins the required Python minor
-version. Compiled native binaries and their license/source archive are retained.
+then marshaled and compressed. Each payload is encrypted with AES-256-GCM using
+`CFM_ENCRYPTION_KEY`, then stored as shuffled Base85 chunks. Set that variable in
+Railway to the 64-character hex key provided with this release. It is needed at
+runtime; the already-encrypted repository can be built without the key. Keep it
+out of the repository. A person who can read the key or inspect a running Python
+process can still recover its code. The supplied Dockerfile pins Python 3.12.
+Compiled native binaries and their license/source archive are retained.
 
 ## Deploy on Railway
 
@@ -87,6 +88,7 @@ users behind that proxy. Deploy directly on a VPS for real client IP limits.
 | Variable | Default | Purpose |
 |---|---|---|
 | `ADMIN_PASSWORD` | `admin` | Dashboard login; set before public deployment |
+| `CFM_ENCRYPTION_KEY` | required | 64 hexadecimal characters; keep it as a private Railway variable |
 | `PORT` | `8000` | HTTP dashboard listener |
 | `DATA_DIR` | `/data` | Persistent state and generated TLS files |
 | `ANYTLS_PORT` | `8443` | Internal TLS/TCP listener |
