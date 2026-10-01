@@ -38,11 +38,16 @@ async def run():
         await main.load_state()
         assert endpoint_config()['host'] == 'altaria.proxy.rlwy.net'
         assert endpoint_config()['port'] == 30321
-        os.environ.update(RAILWAY_TCP_PROXY_DOMAIN='automatic.proxy.rlwy.net', RAILWAY_TCP_PROXY_PORT='12345')
-        assert endpoint_config()['source'] == 'environment'
-        assert endpoint_config()['host'] == 'automatic.proxy.rlwy.net'
-        assert endpoint_config()['port'] == 12345
-        for key in ('RAILWAY_TCP_PROXY_DOMAIN','RAILWAY_TCP_PROXY_PORT'):
+        os.environ.update(ANYTLS_PUBLIC_HOST='old-project.proxy.rlwy.net', ANYTLS_PUBLIC_PORT='30321',
+                          ANYTLS_SNI='localhost', RAILWAY_TCP_PROXY_DOMAIN='hopper.proxy.rlwy.net',
+                          RAILWAY_TCP_PROXY_PORT='49906')
+        assert endpoint_config()['source'] == 'railway'
+        assert endpoint_config()['host'] == 'hopper.proxy.rlwy.net'
+        assert endpoint_config()['port'] == 49906
+        live_uri = (await client.get('/api/links')).json()['links'][0]['vless_link']
+        assert '@hopper.proxy.rlwy.net:49906/' in live_uri, live_uri
+        assert 'sni=hopper.proxy.rlwy.net' in live_uri, live_uri
+        for key in ('ANYTLS_PUBLIC_HOST','ANYTLS_PUBLIC_PORT','ANYTLS_SNI','RAILWAY_TCP_PROXY_DOMAIN','RAILWAY_TCP_PROXY_PORT'):
             os.environ.pop(key, None)
         response = await client.patch('/api/anytls', json={'endpoint':'[2001:db8::1]:443'})
         assert response.status_code == 200
