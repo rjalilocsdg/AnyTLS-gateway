@@ -25,6 +25,12 @@ Docker image ships encoded Python modules. This encoding is reversible.
 
 The AnyTLS endpoint uses `RAILWAY_TCP_PROXY_DOMAIN` and
 `RAILWAY_TCP_PROXY_PORT` automatically. Its external port can differ from 8443.
+If the proxy variables are unavailable, open **Settings → AnyTLS · TCP Proxy**,
+enter the public `hostname:port` from Railway, and save. The saved address
+overrides environment settings and updates all AnyTLS links and subscriptions.
+Use “automatic settings” to clear the override. This setting persists in `/data`.
+Until an endpoint is configured, the panel does not generate a localhost link.
+
 The HTTPS dashboard and raw AnyTLS TCP listener share one service.
 Use one replica: this implementation stores users and quotas locally.
 
