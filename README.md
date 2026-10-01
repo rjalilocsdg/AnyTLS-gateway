@@ -1,6 +1,6 @@
-# AnyTLS Gateway
+# CFM Gateway
 
-Deployable AnyTLS server with the NewYork dashboard, subscription groups,
+Deployable AnyTLS server with the CFM dashboard, subscription groups,
 Telegram management bot, per-user passwords, traffic quotas, expiry, speed
 limits, and live traffic statistics. VLESS/WebSocket and XHTTP remain available.
 
@@ -8,7 +8,22 @@ The transport uses the [official AnyTLS session engine](https://github.com/anytl
 pinned to commit `fd6167acd6d73b9fa3e607659951847fbc9e6c50`. It supports AnyTLS
 v1/v2 sessions, padding negotiation, multiple streams, TCP, and UDP-over-TCP.
 Each configuration's UUID is its AnyTLS password. Native code is compiled; the
-Docker image ships encoded Python modules. This encoding is reversible.
+Docker image ships obfuscated Python 3.12 bytecode. This obfuscation is reversible.
+
+## CFM interface and distribution
+
+CFM branding appears on the login, dashboard, and public subscription pages.
+The interface uses a charcoal and teal palette, a vector CFM logo, responsive
+navigation, visible keyboard focus, and light/dark dashboard themes. Icons are
+served locally; the bundled Tabler font license is in `assets/TABLER-LICENSE`.
+
+The seven Python modules are compiled with Python 3.12, with docstrings removed,
+then marshaled, compressed, masked with a per-module random key, and stored as
+shuffled Base85 chunks. A SHA-256 check detects corrupted payloads at load time.
+There is no plain source payload in the wrappers. This makes casual inspection
+harder, but anyone with the artifacts can reverse the loader. Do not put secrets
+in the application code. The supplied Dockerfile pins the required Python minor
+version. Compiled native binaries and their license/source archive are retained.
 
 ## Deploy on Railway
 
