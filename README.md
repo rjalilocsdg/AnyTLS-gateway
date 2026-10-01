@@ -26,9 +26,9 @@ Docker image ships encoded Python modules. This encoding is reversible.
 The AnyTLS endpoint uses `RAILWAY_TCP_PROXY_DOMAIN` and
 `RAILWAY_TCP_PROXY_PORT` automatically. Its external port can differ from 8443.
 If the proxy variables are unavailable, open **Settings → AnyTLS · TCP Proxy**,
-enter the public `hostname:port` from Railway, and save. The saved address
-overrides environment settings and updates all AnyTLS links and subscriptions.
-Use “automatic settings” to clear the override. This setting persists in `/data`.
+enter the public `hostname:port` from Railway, and save. Railway’s current proxy address takes priority after project changes. The saved
+address is used when Railway does not provide proxy variables. Use “automatic
+settings” to clear the saved address. This setting persists in `/data`.
 Until an endpoint is configured, the panel does not generate a localhost link.
 
 The HTTPS dashboard and raw AnyTLS TCP listener share one service.
@@ -88,13 +88,9 @@ the service-wide public endpoint and client TLS preferences.
 
 ## Local development / VPS
 
-The distribution includes compiled Linux amd64/arm64 engines. To rebuild the
-native engine, extract `native-source.tar.gz`. Its corresponding source and
-vendored dependencies are included under their licenses; see `NATIVE-LICENSE.md`.
 Requires Python 3.12 and Go 1.24 or later:
 
 ```sh
-tar -xzf native-source.tar.gz
 cd native
 go build -trimpath -ldflags='-s -w' -o ../bin/anytls-gateway .
 cd ..

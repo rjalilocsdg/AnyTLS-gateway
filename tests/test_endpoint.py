@@ -39,10 +39,11 @@ async def run():
         assert endpoint_config()['host'] == 'altaria.proxy.rlwy.net'
         assert endpoint_config()['port'] == 30321
         os.environ.update(RAILWAY_TCP_PROXY_DOMAIN='automatic.proxy.rlwy.net', RAILWAY_TCP_PROXY_PORT='12345')
-        assert endpoint_config()['source'] == 'saved'
-        response = await client.patch('/api/anytls', json={'endpoint':''})
-        assert response.json()['host'] == 'automatic.proxy.rlwy.net'
-        assert response.json()['port'] == 12345
+        assert endpoint_config()['source'] == 'environment'
+        assert endpoint_config()['host'] == 'automatic.proxy.rlwy.net'
+        assert endpoint_config()['port'] == 12345
+        for key in ('RAILWAY_TCP_PROXY_DOMAIN','RAILWAY_TCP_PROXY_PORT'):
+            os.environ.pop(key, None)
         response = await client.patch('/api/anytls', json={'endpoint':'[2001:db8::1]:443'})
         assert response.status_code == 200
         assert '@[2001:db8::1]:443/' in (await client.get('/api/links')).json()['links'][0]['vless_link']
