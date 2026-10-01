@@ -21,10 +21,12 @@ The seven Python modules are compiled with Python 3.12, with docstrings removed,
 then marshaled and compressed. Each payload is encrypted with AES-256-GCM using
 `CFM_ENCRYPTION_KEY`, then stored as shuffled Base85 chunks. Set that variable in
 Railway to the 64-character hex key provided with this release. It is needed at
-runtime; the already-encrypted repository can be built without the key. Keep it
-out of the repository. A person who can read the key or inspect a running Python
-process can still recover its code. The supplied Dockerfile pins Python 3.12.
-Compiled native binaries and their license/source archive are retained.
+runtime; the already-encrypted repository can be built without the key. Docker
+compiles the loader modules into stripped Cython extensions and omits their
+Python wrappers from the final image. This makes static inspection harder; the
+application bytecode still exists in process memory at runtime. Keep the key out
+of the repository. The Dockerfile pins Python 3.12. Compiled native binaries and
+their license/source archive are retained.
 
 ## Deploy on Railway
 
